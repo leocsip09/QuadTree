@@ -2,17 +2,17 @@ import pygame
 import random
 import math
 
-ancho = 800
-altura = 600
+ancho = 2200
+altura = 2000
 col_fondo = (238, 247, 255)
 col_coloide = (255, 210, 194)
 col_agua = (55, 190, 194)
 borde_part = (0, 0, 0)
 borde_quadtree = (255, 0, 0)
-num_part = 400
+num_part = 900
 K = 0.5
 gravedad = 0
-temperatura = 0.998
+temperatura = 0.94
 
 class Particula:
     def __init__(self, x, y, radio, color):
@@ -39,7 +39,7 @@ class Particula:
                 angulo = math.atan2(dy, dx)
 
                 if distancia < self.radio + particula.radio:
-                    self.vx += -1 * math.cos(angulo)
+                    self.vx += 1 * math.cos(angulo)
                     self.vy += -1 * math.sin(angulo)
                 else:
                     fuerza = K * (self.masa * particula.masa) / (distancia ** 2)

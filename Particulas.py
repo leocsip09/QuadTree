@@ -1,13 +1,13 @@
 import pygame
 import random
 import math
-ancho = 800
-altura = 600
+ancho = 2200
+altura = 2000
 col_fondo = (238, 247, 255)
 col_coloide = (255, 210, 194)
 col_agua = (55, 190, 194)
 borde_part = (0, 0, 0)
-num_part = 400
+num_part = 1000
 K = 0.5
 gravedad = 0
 temperatura = 0.998
