@@ -1,3 +1,5 @@
+import pygame
+
 class Punto:
     def __init__(self, x, y):
         self.x = x
@@ -10,7 +12,10 @@ class Punto:
     
     def __repr__(self):
         return f"({self.x}, {self.y})"
-
+    
+    def dibujar(self, screen, radius):
+        pygame.draw.circle(screen, (0, 0, 255), (self.x, self.y), radius)
+    
 class Rectangulo:
     def __init__(self, x, y, ancho, alto):
         self.x = x
@@ -156,7 +161,13 @@ class QuadTree:
         string = self.repr_helper("")
         return "[" + string[:-2] + "]"
 
-    
+    def dibujar(self, screen, stroke_weight):
+        pygame.draw.rect(screen, (255, 255, 255), (self.espacio.x, self.espacio.y, self.espacio.ancho, self.espacio.alto), stroke_weight)
+        if self.dividido:
+            self.n_o.dibujar(screen, stroke_weight)
+            self.n_e.dibujar(screen, stroke_weight)
+            self.s_o.dibujar(screen, stroke_weight)
+            self.s_e.dibujar(screen, stroke_weight)
 
 if __name__ == '__main__':
     rect = Rectangulo(0, 0, 200, 200)
