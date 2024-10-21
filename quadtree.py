@@ -1,4 +1,5 @@
 import pygame
+import math
 
 class Punto:
     def __init__(self, x, y):
@@ -13,8 +14,8 @@ class Punto:
     def __repr__(self):
         return f"({self.x}, {self.y})"
     
-    def dibujar(self, screen, radius):
-        pygame.draw.circle(screen, (0, 0, 255), (self.x, self.y), radius)
+    def dibujar(self, screen, color, radio):
+        pygame.draw.circle(screen, color, (self.x, self.y), radio)
     
 class Rectangulo:
     def __init__(self, x, y, ancho, alto):
@@ -145,6 +146,43 @@ class QuadTree:
         if self.dividido and self.contar_elementos() <= self.capacidad:
             self.fusionar()
 
+    def colision(self, punto, rango):
+        dist_x = abs(punto.x - (self.espacio.x + self.espacio.ancho/2))
+        dist_y = abs(punto.y - (self.espacio.y + self.espacio.alto/2))
+
+        if dist_x > (self.espacio.ancho/2 + rango):
+            return False
+        if dist_y > (self.espacio.alto/2 + rango):
+            return False
+        
+        if dist_x <= self.espacio.ancho/2:
+            return True
+        if dist_y <= self.espacio.alto/2:
+            return True
+        
+        distancia_esquina = math.sqrt((dist_x - self.espacio.ancho/2) ** 2 + (dist_y - self.espacio.alto/2) ** 2)
+        return distancia_esquina <= rango
+
+    def buscar_en_rango(self, centro, rango, puntos=None):
+        if puntos is None:
+            puntos = []
+
+        if not self.colision(centro, rango):
+            return puntos
+        
+        if not self.dividido:
+            for punto in self.espacio.puntos:
+                distancia = math.sqrt((punto.x - centro.x)**2 + (punto.y - centro.y)**2)
+                if distancia <= rango:
+                    puntos.append(punto)
+        else:
+            self.n_o.buscar_en_rango(centro, rango, puntos)
+            self.n_e.buscar_en_rango(centro, rango, puntos)
+            self.s_o.buscar_en_rango(centro, rango, puntos)
+            self.s_e.buscar_en_rango(centro, rango, puntos)
+        
+        return puntos
+
     def repr_helper(self, string):
         if not self.dividido:
             for punto in self.espacio.puntos:
@@ -168,47 +206,3 @@ class QuadTree:
             self.n_e.dibujar(screen, stroke_weight)
             self.s_o.dibujar(screen, stroke_weight)
             self.s_e.dibujar(screen, stroke_weight)
-
-if __name__ == '__main__':
-    rect = Rectangulo(0, 0, 200, 200)
-    qtree = QuadTree(rect, 4)
-
-    puntos = [
-        Punto(10, 10),
-        Punto(110, 10),
-        Punto(10, 110),
-        Punto(110, 110),
-        Punto(20, 20),
-        Punto(30, 30),
-        Punto(5, 5),
-    ]
-
-    for punto in puntos:
-        qtree.insertar(punto)
-        print(punto)
-
-    print(f"Número total de elementos en el QuadTree: {qtree.contar_elementos()}")
-    print(qtree)
-
-    print(f"Nodo Noroeste: {qtree.n_o.contar_elementos() if qtree.n_o else 'N/A'}")
-    print(f"Nodo Noreste: {qtree.n_e.contar_elementos() if qtree.n_e else 'N/A'}")
-    print(f"Nodo Suroeste: {qtree.s_o.contar_elementos() if qtree.s_o else 'N/A'}")
-    print(f"Nodo Sureste: {qtree.s_e.contar_elementos() if qtree.s_e else 'N/A'}")
-
-    puntos_a_eliminar = [puntos[0], puntos[1], puntos[4], puntos[5]]
-    for punto in puntos_a_eliminar:
-        if qtree.buscar(punto):
-            print(f"El punto {punto} existe")
-        else:
-            print(f"El punto {punto} no existe")
-        qtree.eliminar(punto)
-        print(f"Eliminado: ({punto.x}, {punto.y})")
-        print(f"Número total de elementos en el QuadTree después de la eliminación: {qtree.contar_elementos()}")
-        print(qtree)
-
-        print(f"Nodo Noroeste: {qtree.n_o.contar_elementos() if qtree.n_o else 'N/A'}")
-        print(f"Nodo Noreste: {qtree.n_e.contar_elementos() if qtree.n_e else 'N/A'}")
-        print(f"Nodo Suroeste: {qtree.s_o.contar_elementos() if qtree.s_o else 'N/A'}")
-        print(f"Nodo Sureste: {qtree.s_e.contar_elementos() if qtree.s_e else 'N/A'}")
-
-    print(f"Número total de elementos en el QuadTree al final: {qtree.contar_elementos()}")
