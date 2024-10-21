@@ -8,13 +8,14 @@ col_fondo = (238, 247, 255)
 col_coloide = (255, 210, 194)
 col_agua = (55, 190, 194)
 borde_part = (0, 0, 0)
-num_part = 100
+borde_quadtree = (255, 0, 0)
+num_part = 1000
 K = 0.5
 gravedad = 0
 temperatura = 0.998
 
 class Particula:
-    def __init__(self, x, y, radio, color, lista):
+    def __init__(self, x, y, radio, color):
         self.x = x
         self.y = y
         self.radio = radio
@@ -128,6 +129,14 @@ class Quadtree:
 
         return self.particulas
 
+    def dibujar(self, pantalla):
+        x, y, w, h = self.limite
+        pygame.draw.rect(pantalla, borde_quadtree, (x, y, w, h), 1)
+        if self.dividido:
+            for cuadrante in self.cuadrantes:
+                cuadrante.dibujar(pantalla)
+
+
 # Inicialización de Pygame
 pygame.init()
 pantalla = pygame.display.set_mode((ancho, altura))
@@ -135,19 +144,20 @@ pygame.display.set_caption("Simulación de Partículas")
 clock = pygame.time.Clock()
 particulas_c = []
 particulas_a = []
+mostrar_quadtree = False
 
 # Crear partículas
 for _ in range(num_part):
     x = random.uniform(50, ancho - 50)
     y = random.uniform(50, altura - 50)
     radio = 20
-    particula_c = Particula(x, y, radio, col_coloide, particulas_c)
+    particula_c = Particula(x, y, radio, col_coloide)
     particulas_c.append(particula_c)
 for _ in range(num_part):
     x = random.uniform(50, ancho - 50)
     y = random.uniform(50, altura - 50)
     radio = 12.5
-    particula_a = Particula(x, y, radio, col_agua, particulas_a)
+    particula_a = Particula(x, y, radio, col_agua)
     particulas_a.append(particula_a)
 
 ejecución = True
@@ -155,18 +165,22 @@ while ejecución:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             ejecución = False
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_v:
+                mostrar_quadtree = not mostrar_quadtree
 
     pantalla.fill(col_fondo)
 
-    # Crear y llenar el quadtree
     quadtree = Quadtree(0, (0, 0, ancho, altura))
     for particula in particulas_c + particulas_a:
         quadtree.insertar(particula)
 
-    # Actualizar y dibujar partículas
     for particula in particulas_c + particulas_a:
         particula.refresco(quadtree.consultar(particula))
         particula.dibujar(pantalla)
+
+    if mostrar_quadtree:
+        quadtree.dibujar(pantalla)
 
     pygame.display.flip()
     clock.tick(60)
