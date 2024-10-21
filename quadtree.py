@@ -99,16 +99,16 @@ class QuadTree:
                 return True
         else:
             if self.n_o.eliminar(punto):
-                self.optimizar()  # Llamada a optimizar después de eliminar
+                self.optimizar()
                 return True
             if self.n_e.eliminar(punto):
-                self.optimizar()  # Llamada a optimizar después de eliminar
+                self.optimizar()
                 return True
             if self.s_o.eliminar(punto):
-                self.optimizar()  # Llamada a optimizar después de eliminar
+                self.optimizar()
                 return True
             if self.s_e.eliminar(punto):
-                self.optimizar()  # Llamada a optimizar después de eliminar
+                self.optimizar()
                 return True
 
     def buscar(self, punto):
@@ -176,7 +176,6 @@ if __name__ == '__main__':
         qtree.insertar(punto)
         print(punto)
 
-    # Mostrar el número total de elementos
     print(f"Número total de elementos en el QuadTree: {qtree.contar_elementos()}")
     print(qtree)
 
@@ -185,7 +184,7 @@ if __name__ == '__main__':
     print(f"Nodo Suroeste: {qtree.s_o.contar_elementos() if qtree.s_o else 'N/A'}")
     print(f"Nodo Sureste: {qtree.s_e.contar_elementos() if qtree.s_e else 'N/A'}")
 
-    puntos_a_eliminar = [puntos[0], puntos[1], puntos[4], puntos[5]]  # Eliminar algunos puntos
+    puntos_a_eliminar = [puntos[0], puntos[1], puntos[4], puntos[5]]
     for punto in puntos_a_eliminar:
         if qtree.buscar(punto):
             print(f"El punto {punto} existe")
