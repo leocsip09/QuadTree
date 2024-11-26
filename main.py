@@ -113,7 +113,7 @@ while running:
     if centro_busqueda and rango_busqueda and not ha_insertado:
         dibujar_circulo_con_transparencia(screen, (0, 255, 0, 50), centro_busqueda, rango_busqueda)
 
-    if len(puntos_busqueda) != 0:
+    if len(puntos_busqueda) != 0 and not ha_insertado:
         dibujar_puntos(puntos_busqueda, (0, 200, 0))
 
     color_query_text = (100, 100, 100) if active_query_box else (200, 200, 200)
